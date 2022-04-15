@@ -1,0 +1,42 @@
+trigger: none
+
+jobs:
+  - job: export_commit_solution
+    pool: Default
+    variables:
+      - group: Credentials
+      - group: Dev
+    steps:
+      - checkout: self
+        persistCredentials: true
+      - task: PowerShell@2
+        inputs:
+          targetType: 'inline'
+          script: |
+            # Write your PowerShell commands here.
+            Write-Host "Build.SourceBranch $(Build.SourceBranch)"
+            $branchName = "$(Build.SourceBranch)".replace("refs/heads/", "")
+            Write-Host "branchName " + $branchName
+            git checkout $branchName
+            git config user.name "Automated Pipeline Commit on behalf of $(Build.QueuedBy)"
+            git config user.email "PPALM-ALM-Build-Account"
+            git pull
+        displayName: "Checkout branch and config user"
+      - task: PowerShell@2
+        inputs:
+          targetType: 'inline'
+          script: |
+            Write-Host "$(SolutionName)"
+            
+            ./pwsh/Export-UnpackSolution.ps1 `
+              -Name $(SolutionName) `
+              -Url $(Url) `
+              -ClientId $(ClientId) `
+              -ClientSecret $(ClientSecret) `
+              -TenantId $(TenantId)
+        displayName: Export / Unpack Solution
+      - script: |
+          git add .
+          git commit -m "Automated commit of $(SolutionName) solution from Dev"
+          git push
+        displayName: Commit / Push

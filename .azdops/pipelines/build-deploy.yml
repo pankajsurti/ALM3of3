@@ -1,0 +1,85 @@
+trigger:
+  branches:
+    include: [main]
+  paths:
+    include:
+      - solutions/Demo2022/*
+
+stages:
+  - stage: build
+    jobs:
+      - job: build_Demo2022
+        displayName: Build Demo2022
+        pool: Default
+        steps:
+        
+          - checkout: self
+            persistCredentials: true
+          - task: PowerShell@2
+            inputs:
+              targetType: 'inline'
+              script: |
+                ./pwsh/Compress-Solution.ps1 `
+                  -Name Demo2022
+            displayName: Pack Solution
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              ArtifactName: 'solution-artifact'
+              publishLocation: 'Container'
+
+  - stage: Test
+    dependsOn: build
+    jobs:
+      - deployment: Test_Deploy_PowerPlatform_Solutions
+        displayName: Test - Deploy Power Platform Solution(s) 
+        pool: Default
+
+        environment: Test
+        variables:
+          - group: Credentials
+          - group: Test
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: PowerShell@2
+                  inputs:
+                    targetType: 'inline'
+                    script: |
+                        ./pwsh/Import-Solution.ps1 `
+                        -Name Demo2022 `
+                        -SettingsDescriptor test `
+                        -Url $(Url) `
+                        -ClientId $(ClientId) `
+                        -ClientSecret $(ClientSecret) `
+                        -TenantId $(TenantId)
+                  displayName: Import Demo2022
+
+  - stage: Prod
+    dependsOn: [build, Test]
+    jobs:
+      - deployment: Prod_Deploy_PowerPlatform_Solutions
+        displayName: Prod Deploy Power Platform Solution(s)
+        pool: Default
+
+        environment: Prod
+        variables:
+          - group: Credentials
+          - group: Prod
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: PowerShell@2
+                  inputs:
+                    targetType: 'inline'
+                    script: |
+                        ./pwsh/Import-Solution.ps1 `
+                        -Name Demo2022 `
+                        -SettingsDescriptor prod `
+                        -Url $(Url) `
+                        -ClientId $(ClientId) `
+                        -ClientSecret $(ClientSecret) `
+                        -TenantId $(TenantId)
+                  displayName: Import Demo2022
