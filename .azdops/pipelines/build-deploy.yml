@@ -10,7 +10,8 @@ stages:
     jobs:
       - job: build_Demo2022
         displayName: Build Demo2022
-        pool: Default
+        pool: 
+          vmImage: 'windows-latest'
         steps:
         
           - checkout: self
@@ -33,7 +34,8 @@ stages:
     jobs:
       - deployment: Test_Deploy_PowerPlatform_Solutions
         displayName: Test - Deploy Power Platform Solution(s) 
-        pool: Default
+        pool: 
+          vmImage: 'windows-latest'
 
         environment: Test
         variables:
@@ -61,7 +63,8 @@ stages:
     jobs:
       - deployment: Prod_Deploy_PowerPlatform_Solutions
         displayName: Prod Deploy Power Platform Solution(s)
-        pool: Default
+        pool: 
+          vmImage: 'windows-latest'
 
         environment: Prod
         variables:
