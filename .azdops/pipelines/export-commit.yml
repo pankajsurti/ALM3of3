@@ -2,7 +2,8 @@ trigger: none
 
 jobs:
   - job: export_commit_solution
-    pool: Default
+    pool: 
+      vmImage: 'windows-latest'
     variables:
       - group: Credentials
       - group: Dev
