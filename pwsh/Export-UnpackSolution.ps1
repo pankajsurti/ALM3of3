@@ -24,6 +24,20 @@ Write-Host "Finished calling Create-AuthProfile.ps1 ..."
 
 Write-Host "calling switch ..."
 
+if ( Test-Path $path)
+{
+  Write-Host "Delete $Path"
+  del $path
+  Write-Host "Deleted $Path"
+}
+[string]$ManagedPath = "./$Name" + "_managed.zip"
+if ( Test-Path $ManagedPath)
+{
+  Write-Host "Delete $ManagedPath"
+  del $ManagedPath
+  Write-Host "Deleted $ManagedPath"
+}
+
 switch($PackageType)
 {
   "Both" {
