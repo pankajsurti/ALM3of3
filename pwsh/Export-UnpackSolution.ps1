@@ -39,7 +39,7 @@ if ( Test-Path $ManagedPath)
 }
 
 # create an empty test and prod config file 
-$configFile = @( ".\config.test.json", ".\config.prod.json") | ForEach-Object -Process {
+$configFile = @( ".\$Name\config.test.json", ".\$Name\config.prod.json") | ForEach-Object -Process {
     if (-not ( Test-Path $_) )
     {
         Write-Host "Create empty $_"
