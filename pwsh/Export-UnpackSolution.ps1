@@ -38,6 +38,21 @@ if ( Test-Path $ManagedPath)
   Write-Host "Deleted $ManagedPath"
 }
 
+# create an empty test config file 
+$configFile = ".\config.test.json"
+if (-not ( Test-Path $configFile) )
+{
+    Write-Host "Create an empty $configFile"
+    @{} | ConvertTo-Json | Out-File $configFile
+}
+# create an empty prod config file 
+$configFile = ".\config.prod.json"
+if (-not ( Test-Path $configFile) )
+{
+    Write-Host "Create an empty $configFile"
+    @{} | ConvertTo-Json | Out-File $configFile
+}
+
 switch($PackageType)
 {
   "Both" {
