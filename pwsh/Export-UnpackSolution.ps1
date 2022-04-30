@@ -38,15 +38,6 @@ if ( Test-Path $ManagedPath)
   Write-Host "Deleted $ManagedPath"
 }
 
-# create an empty test and prod config file 
-$configFile = @( ".\$Name\config.test.json", ".\$Name\config.prod.json") | ForEach-Object -Process {
-    if (-not ( Test-Path $_) )
-    {
-        Write-Host "Create empty $_"
-        "{}" | Out-File $_
-    }
-}
-
 switch($PackageType)
 {
   "Both" {
@@ -88,9 +79,14 @@ switch($PackageType)
       -Name $Name
   }
 }
-Write-Host "finished calling switch ..."
-
-Write-Host "pac solution unpack calling switch ..."
+# create an empty test and prod config file 
+$configFile = @( ".\$Name\config.test.json", ".\$Name\config.prod.json") | ForEach-Object -Process {
+    if (-not ( Test-Path $_) )
+    {
+        Write-Host "Create empty $_"
+        "{}" | Out-File $_
+    }
+}
 
 pac solution unpack `
   --zipfile $Path `
@@ -98,4 +94,3 @@ pac solution unpack `
   --packagetype $PackageType `
   --allowDelete
 
-Write-Host "Finished pac solution unpack calling switch ..."
