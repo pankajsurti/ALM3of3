@@ -79,10 +79,11 @@ switch($PackageType)
       -Name $Name
   }
 }
-# create an empty test and prod config file 
-$configFile = @( ".\$Name\config.test.json", ".\$Name\config.prod.json") | ForEach-Object -Process {
+# create empty test and prod config file 
+$configFile = @( "solutions\$Name\config.test.json", "solutions\$Name\config.prod.json") | ForEach-Object -Process {
     if (-not ( Test-Path $_) )
     {
+
         Write-Host "Create empty $_"
         "{}" | Out-File $_
     }
