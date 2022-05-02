@@ -79,6 +79,14 @@ switch($PackageType)
       -Name $Name
   }
 }
+
+
+pac solution unpack `
+  --zipfile $Path `
+  --folder $Folder `
+  --packagetype $PackageType `
+  --allowDelete
+
 # create empty test and prod config file 
 $configFile = @( "solutions\$Name\config.test.json", "solutions\$Name\config.prod.json") | ForEach-Object -Process {
     if (-not ( Test-Path $_) )
@@ -88,10 +96,3 @@ $configFile = @( "solutions\$Name\config.test.json", "solutions\$Name\config.pro
         "{}" | Out-File $_
     }
 }
-
-pac solution unpack `
-  --zipfile $Path `
-  --folder $Folder `
-  --packagetype $PackageType `
-  --allowDelete
-
